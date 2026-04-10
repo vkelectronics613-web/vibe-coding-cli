@@ -2,23 +2,11 @@
   "name": "geminiopenv-ai",
   "version": "1.0.0",
   "description": "Terminal AI Coding Assistant (Gemini + OpenRouter)",
-  "main": "index.js",
   "bin": {
-    "geminiviratpro": "index.js"
+    "geminiviratpro": "bin/cli.js"
   },
-  "files": [
-    "main.py",
-    "agent.py",
-    "router.py",
-    "ai_gemini.py",
-    "ai_openrouter.py",
-    "config.py",
-    "memory.py",
-    "tools",
-    "requirements.txt",
-    "index.js"
-  ],
-  "keywords": ["ai", "cli", "gemini", "coding"],
-  "author": "Virat Kumar",
-  "license": "MIT"
+  "type": "module",
+  "dependencies": {
+    "chalk": "^5.3.0"
+  }
 }
