@@ -1,0 +1,48 @@
+"""
+Safe Python code execution with timeout and output capture.
+"""
+import subprocess
+import sys
+import tempfile
+import os
+from config import CODE_TIMEOUT
+
+
+def run_python(code: str) -> str:
+    """Execute Python code safely in a subprocess with timeout."""
+    try:
+        # Write code to a temp file
+        with tempfile.NamedTemporaryFile(
+            mode="w", suffix=".py", delete=False, encoding="utf-8"
+        ) as f:
+            f.write(code)
+            tmp_path = f.name
+
+        try:
+            result = subprocess.run(
+                [sys.executable, tmp_path],
+                capture_output=True,
+                text=True,
+                timeout=CODE_TIMEOUT,
+                cwd=os.getcwd(),
+            )
+
+            output = ""
+            if result.stdout:
+                output += result.stdout
+            if result.stderr:
+                if output:
+                    output += "\n--- stderr ---\n"
+                output += result.stderr
+            if result.returncode != 0:
+                output += f"\n(exit code: {result.returncode})"
+
+            return output.strip() if output.strip() else "(no output)"
+
+        finally:
+            os.unlink(tmp_path)
+
+    except subprocess.TimeoutExpired:
+        return f"Error: Code execution timed out ({CODE_TIMEOUT}s limit)"
+    except Exception as e:
+        return f"Error running code: {e}"

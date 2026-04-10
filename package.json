@@ -1,0 +1,436 @@
+<div align="center">
+
+# 🔥 Gemini Virat Pro AI
+
+### The Ultimate Hybrid AI Assistant for Your Terminal
+
+[![npm](https://img.shields.io/badge/npm-geminiopenv--ai-red?style=for-the-badge&logo=npm)](https://npmjs.com)
+[![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)](https://python.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
+
+**ChatGPT + Gemini + AutoGPT — unified in one powerful CLI tool.**
+
+</div>
+
+---
+
+## ⚡ Quick Start
+
+```bash
+# 1. Install globally
+npm install -g git+https://github.com/<your-repo>/geminiopenv-ai.git
+
+# 2. Set your API key (just one required!)
+# Windows CMD:
+setx GEMINI_API_KEY "your_key_here"
+# Windows PowerShell:
+[System.Environment]::SetEnvironmentVariable("GEMINI_API_KEY","your_key_here","User")
+# macOS / Linux:
+echo 'export GEMINI_API_KEY="your_key_here"' >> ~/.bashrc && source ~/.bashrc
+
+# 3. Launch
+geminiviratpro
+```
+
+That's it. You're ready. 🚀
+
+---
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Installation](#-installation)
+- [API Keys Setup](#-api-keys-setup)
+- [Commands Reference](#-commands-reference)
+- [Agent System](#-agent-system)
+- [Tools](#-tools)
+- [Configuration](#-configuration)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---------|-------------|
+| 🤖 **Dual AI Engine** | Gemini as primary, OpenRouter as automatic fallback |
+| 🧠 **Autonomous Agent** | Breaks complex tasks into steps, executes tools, iterates to completion |
+| 📁 **File Operations** | Read, write, list, search, and visualize file trees |
+| 🐍 **Code Execution** | Run Python code safely with timeout protection |
+| 🎨 **Image Generation** | Generate images from text prompts directly in terminal |
+| 💾 **Conversation Memory** | Sliding window of 50 messages with full context recall |
+| 🌊 **Streaming Responses** | Real-time token-by-token output |
+| 🌍 **Cross-Platform** | Works on Windows, macOS, and Linux |
+
+---
+
+## 🏗 Architecture
+
+```
+geminiviratpro (npm global command)
+    │
+    ▼
+ index.js (Node.js launcher)
+    │
+    ▼
+ main.py (CLI interface & command router)
+    │
+    ├── router.py ──► ai_gemini.py (Primary)
+    │               └► ai_openrouter.py (Fallback)
+    │
+    ├── agent.py (Autonomous task execution)
+    │
+    ├── memory.py (Conversation context)
+    │
+    ├── image_gen.py (Image generation)
+    │
+    └── tools/
+        ├── file_ops.py (File system operations)
+        └── code_runner.py (Safe code execution)
+```
+
+---
+
+## 📦 Installation
+
+### Prerequisites
+
+- **Node.js** 14+ and **npm**
+- **Python** 3.8+
+- **pip package:** `requests` (`pip install requests`)
+
+### Install from GitHub
+
+```bash
+npm install -g git+https://github.com/<your-username>/geminiopenv-ai.git
+```
+
+### Install from Local Clone
+
+```bash
+git clone https://github.com/<your-username>/geminiopenv-ai.git
+cd geminiopenv-ai
+npm install -g .
+```
+
+### Verify Installation
+
+```bash
+geminiviratpro
+```
+
+You should see:
+
+```
+╔══════════════════════════════════════════╗
+║        🔥 Gemini Virat Pro AI           ║
+║     Your Hybrid AI Terminal Assistant    ║
+╚══════════════════════════════════════════╝
+
+  Gemini     ● Connected
+  OpenRouter ● Connected
+```
+
+---
+
+## 🔑 API Keys Setup
+
+### Required Keys
+
+| Key | Required | Purpose | Get it from |
+|-----|----------|---------|-------------|
+| `GEMINI_API_KEY` | ✅ **Yes** | Primary AI engine | [Google AI Studio](https://aistudio.google.com/apikey) |
+| `OPENROUTER_API_KEY` | ⬜ Optional | Fallback AI engine | [OpenRouter](https://openrouter.ai/keys) |
+| `IMAGE_API_KEY` | ⬜ Optional | Image generation | Depends on provider |
+
+### Setting Keys by Platform
+
+<details>
+<summary><b>🪟 Windows</b></summary>
+
+**Permanent (Recommended) — survives terminal restarts:**
+
+```powershell
+# PowerShell (run as Admin for system-wide)
+[System.Environment]::SetEnvironmentVariable("GEMINI_API_KEY", "your_key", "User")
+[System.Environment]::SetEnvironmentVariable("OPENROUTER_API_KEY", "your_key", "User")
+[System.Environment]::SetEnvironmentVariable("IMAGE_API_KEY", "your_key", "User")
+```
+
+```cmd
+:: CMD
+setx GEMINI_API_KEY "your_key"
+setx OPENROUTER_API_KEY "your_key"
+setx IMAGE_API_KEY "your_key"
+```
+
+> ⚠️ After `setx`, restart your terminal for changes to take effect.
+
+**Temporary — current session only:**
+
+```cmd
+:: CMD
+set GEMINI_API_KEY=your_key
+```
+
+```powershell
+# PowerShell
+$env:GEMINI_API_KEY="your_key"
+```
+
+</details>
+
+<details>
+<summary><b>🍎 macOS</b></summary>
+
+**Permanent (add to your shell profile):**
+
+```bash
+# For zsh (default on macOS)
+echo 'export GEMINI_API_KEY="your_key"' >> ~/.zshrc
+echo 'export OPENROUTER_API_KEY="your_key"' >> ~/.zshrc
+echo 'export IMAGE_API_KEY="your_key"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+**Temporary:**
+
+```bash
+export GEMINI_API_KEY="your_key"
+```
+
+</details>
+
+<details>
+<summary><b>🐧 Linux</b></summary>
+
+**Permanent:**
+
+```bash
+echo 'export GEMINI_API_KEY="your_key"' >> ~/.bashrc
+echo 'export OPENROUTER_API_KEY="your_key"' >> ~/.bashrc
+echo 'export IMAGE_API_KEY="your_key"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+**Temporary:**
+
+```bash
+export GEMINI_API_KEY="your_key"
+```
+
+</details>
+
+### Verify Keys
+
+```bash
+geminiviratpro
+# Then type:
+/chat hello
+```
+
+If you get a response → everything works ✅
+
+---
+
+## 📖 Commands Reference
+
+| Command | Description | Example |
+|---------|-------------|---------|
+| `/chat <message>` | Chat with AI | `/chat explain Python decorators` |
+| `/code <task>` | Generate or explain code | `/code write a FastAPI server` |
+| `/agent <task>` | Autonomous multi-step task | `/agent create a Flask todo app` |
+| `/image <prompt>` | Generate an image | `/image a futuristic city at sunset` |
+| `/files` | List files in current directory | `/files` |
+| `/memory` | Show conversation history | `/memory` |
+| `/exit` | Exit the CLI | `/exit` |
+
+### Usage Examples
+
+```
+🔥 Gemini Virat Pro AI > /chat What is the difference between REST and GraphQL?
+
+🔥 Gemini Virat Pro AI > /code write a binary search in Rust
+
+🔥 Gemini Virat Pro AI > /agent create a Python web scraper that extracts headlines from Hacker News
+
+🔥 Gemini Virat Pro AI > /image a cyberpunk hacker cat wearing sunglasses
+```
+
+---
+
+## 🤖 Agent System
+
+The autonomous agent is the most powerful feature. When you use `/agent`, the system:
+
+1. **Analyzes** your task and creates a plan
+2. **Breaks it down** into executable steps
+3. **Uses tools** (file ops, code execution) to complete each step
+4. **Iterates** until the task is fully done
+5. **Reports** results at each step
+
+### Safety Limits
+
+- Maximum **10 iterations** per task (prevents infinite loops)
+- Code execution has a **30-second timeout**
+- All file operations are scoped to the current directory
+
+### How Tool Calling Works
+
+The agent sends structured `TOOL_CALL` instructions to the AI:
+
+```
+TOOL_CALL: {"tool": "write_file", "args": {"path": "app.py", "content": "..."}}
+```
+
+The system executes the tool and feeds results back into the conversation loop.
+
+---
+
+## 🔧 Tools
+
+### File Operations (`tools/file_ops.py`)
+
+| Tool | Description |
+|------|-------------|
+| `read_file(path)` | Read file contents |
+| `write_file(path, content)` | Create or overwrite a file |
+| `list_files(directory)` | List all files in a directory |
+| `search_files(directory, pattern)` | Search files by glob pattern |
+| `file_tree(directory, max_depth)` | Visual directory tree |
+
+### Code Runner (`tools/code_runner.py`)
+
+| Tool | Description |
+|------|-------------|
+| `run_python(code)` | Execute Python code safely (30s timeout) |
+
+---
+
+## ⚙️ Configuration
+
+All configuration lives in `config.py`:
+
+```python
+GEMINI_MODEL    = "gemini-2.0-flash"       # Primary model
+OPENROUTER_MODEL = "google/gemini-2.0-flash-exp:free"  # Fallback
+MAX_AGENT_ITERATIONS = 10                  # Agent loop limit
+MEMORY_SIZE     = 50                       # Messages to remember
+CODE_TIMEOUT    = 30                       # Seconds before code kill
+```
+
+---
+
+## 🔍 Troubleshooting
+
+<details>
+<summary><b>❌ "GEMINI_API_KEY not set"</b></summary>
+
+Your API key isn't in the environment. Set it permanently (see [API Keys Setup](#-api-keys-setup)) and restart your terminal.
+
+Verify with:
+```bash
+# Linux/macOS
+echo $GEMINI_API_KEY
+
+# Windows CMD
+echo %GEMINI_API_KEY%
+
+# PowerShell
+echo $env:GEMINI_API_KEY
+```
+</details>
+
+<details>
+<summary><b>❌ "429 Too Many Requests"</b></summary>
+
+You've hit the API rate limit. Wait 30–60 seconds and try again. Free-tier Gemini has a limit of ~15 requests/minute.
+</details>
+
+<details>
+<summary><b>❌ "Python not found"</b></summary>
+
+Ensure Python 3.8+ is installed and in your PATH:
+```bash
+python3 --version   # Linux/macOS
+python --version     # Windows
+```
+</details>
+
+<details>
+<summary><b>❌ "ModuleNotFoundError: requests"</b></summary>
+
+Install the requests library:
+```bash
+pip install requests
+# or
+pip3 install requests
+```
+</details>
+
+<details>
+<summary><b>❌ Agent stuck in a loop</b></summary>
+
+The agent has a built-in limit of 10 iterations. If tasks aren't completing, try breaking them into smaller `/agent` commands.
+</details>
+
+---
+
+## 🛡️ Security Best Practices
+
+- 🔒 **Never** commit API keys to version control
+- 🔒 **Never** share your keys publicly
+- 🔒 Use environment variables or a `.env` file (add to `.gitignore`)
+- 🔒 Code execution is sandboxed with timeout limits
+- 🔒 All file operations are logged
+
+---
+
+## 📁 Project Structure
+
+```
+geminiopenv-ai/
+├── package.json        # npm package config (global bin)
+├── index.js            # Node.js → Python launcher
+├── main.py             # CLI entry point & command loop
+├── router.py           # AI routing (Gemini → OpenRouter fallback)
+├── ai_gemini.py        # Gemini API client with streaming
+├── ai_openrouter.py    # OpenRouter API client with streaming
+├── agent.py            # Autonomous agent loop
+├── memory.py           # Conversation memory (deque, 50 msgs)
+├── image_gen.py        # Image generation API
+├── config.py           # Central configuration
+├── tools/
+│   ├── __init__.py
+│   ├── file_ops.py     # File system tools
+│   └── code_runner.py  # Safe Python execution
+└── README.md           # This file
+```
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing`
+3. Commit changes: `git commit -m "Add amazing feature"`
+4. Push: `git push origin feature/amazing`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
+**Built with 🔥 by the community**
+
+*Powered by Google Gemini • OpenRouter • Python • Node.js*
+
+</div>

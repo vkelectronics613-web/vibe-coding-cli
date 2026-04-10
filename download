@@ -1,0 +1,166 @@
+#!/usr/bin/env python3
+"""
+🔥 Gemini Virat Pro AI — Main CLI Entry Point
+Hybrid AI assistant: ChatGPT + Gemini + AutoGPT in your terminal.
+"""
+import sys
+import os
+
+# Ensure the package directory is in Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from router import route_chat, get_provider_status
+from agent import run_agent
+from memory import Memory
+from image_gen import generate_image
+from tools.file_ops import list_files
+from config import SYSTEM_PROMPT
+
+
+def print_banner():
+    """Display the welcome banner."""
+    status = get_provider_status()
+    gem = "● Connected" if status["gemini"] else "○ Not configured"
+    opr = "● Connected" if status["openrouter"] else "○ Not configured"
+
+    print("""
+  ╔══════════════════════════════════════════╗
+  ║         🔥 Gemini Virat Pro AI          ║
+  ║      Your Hybrid AI Terminal Assistant   ║
+  ╚══════════════════════════════════════════╝
+""")
+    print(f"  Gemini     {gem}")
+    print(f"  OpenRouter {opr}")
+    print()
+    print("  Commands:")
+    print("    /chat <msg>     Chat with AI")
+    print("    /code <task>    Generate or explain code")
+    print("    /agent <task>   Autonomous multi-step agent")
+    print("    /image <prompt> Generate an image")
+    print("    /files          List current directory")
+    print("    /memory         Show conversation history")
+    print("    /clear          Clear conversation memory")
+    print("    /help           Show this help")
+    print("    /exit           Quit")
+    print()
+    print(f"  {'─' * 44}")
+    print()
+
+
+def print_help():
+    """Show help."""
+    print("""
+  ┌─────────────────────────────────────────┐
+  │  📖 Command Reference                  │
+  ├─────────────────────────────────────────┤
+  │  /chat <message>   Chat with AI         │
+  │  /code <task>      Code generation      │
+  │  /agent <task>     Autonomous agent     │
+  │  /image <prompt>   Generate image       │
+  │  /files            List files           │
+  │  /memory           Show history         │
+  │  /clear            Clear memory         │
+  │  /help             This help            │
+  │  /exit             Quit                 │
+  └─────────────────────────────────────────┘
+""")
+
+
+def main():
+    """Main CLI loop."""
+    memory = Memory()
+    print_banner()
+
+    while True:
+        try:
+            user_input = input("  🔥 > ").strip()
+        except (KeyboardInterrupt, EOFError):
+            print("\n\n  👋 Goodbye!\n")
+            break
+
+        if not user_input:
+            continue
+
+        # ─── Command Parsing ─────────────────────────
+        if user_input == "/exit":
+            print("\n  👋 Goodbye!\n")
+            break
+
+        elif user_input == "/help":
+            print_help()
+
+        elif user_input == "/files":
+            print(f"\n{list_files('.')}\n")
+
+        elif user_input == "/memory":
+            print(f"\n  💾 Conversation Memory ({len(memory)} messages):\n")
+            print(memory.display())
+            print()
+
+        elif user_input == "/clear":
+            memory.clear()
+            print("\n  🗑  Memory cleared.\n")
+
+        elif user_input.startswith("/image "):
+            prompt = user_input[7:].strip()
+            if prompt:
+                print()
+                generate_image(prompt)
+                print()
+            else:
+                print("\n  Usage: /image <prompt>\n")
+
+        elif user_input.startswith("/agent "):
+            task = user_input[7:].strip()
+            if task:
+                run_agent(task)
+                print()
+            else:
+                print("\n  Usage: /agent <task description>\n")
+
+        elif user_input.startswith("/chat "):
+            message = user_input[6:].strip()
+            if message:
+                _handle_chat(memory, message)
+            else:
+                print("\n  Usage: /chat <message>\n")
+
+        elif user_input.startswith("/code "):
+            task = user_input[6:].strip()
+            if task:
+                _handle_chat(memory, f"Write code for: {task}", is_code=True)
+            else:
+                print("\n  Usage: /code <task>\n")
+
+        elif user_input.startswith("/"):
+            print(f"\n  ✖ Unknown command: {user_input.split()[0]}")
+            print("  Type /help for available commands.\n")
+
+        else:
+            # Bare text → treat as chat
+            _handle_chat(memory, user_input)
+
+
+def _handle_chat(memory: Memory, message: str, is_code: bool = False):
+    """Handle a chat message with memory and routing."""
+    memory.add("user", message)
+
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    messages.extend(memory.get_messages())
+
+    if is_code:
+        messages.append({
+            "role": "user",
+            "content": "Focus on providing clean, production-ready code with brief explanations."
+        })
+
+    print()
+    response = route_chat(messages, stream=True)
+    print()
+
+    if response:
+        memory.add("assistant", response)
+
+
+if __name__ == "__main__":
+    main()
